@@ -1,0 +1,5 @@
+package rankshandlers
+
+func Init() {
+
+}

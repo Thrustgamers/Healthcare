@@ -1,0 +1,5 @@
+package usershandlers
+
+func Init() {
+
+}
