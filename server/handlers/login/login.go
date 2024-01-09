@@ -29,13 +29,13 @@ func Login(c *fiber.Ctx) error {
 
 func Logout(c *fiber.Ctx) error {
 
-	user, err := utils.ParseRequestBody(storage.UserData)
+	response, err := utils.ParseRequestBody(storage.UserData{}, c)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(user)
+	fmt.Println(response.Body)
 
 	// user := new(storage.UserData)
 
@@ -45,7 +45,7 @@ func Logout(c *fiber.Ctx) error {
 	// 	return c.SendStatus(200)
 	// }
 
-	//Check if the user is in the session manager
+	// // Check if the user is in the session manager
 	// _, ok := storage.SessionManager[user.UserID]
 
 	// if ok {

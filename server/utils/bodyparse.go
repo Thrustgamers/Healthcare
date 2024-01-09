@@ -1,22 +1,30 @@
 package utils
 
 import (
-	"fmt"
+	"errors"
+	"reflect"
+
+	"github.com/gofiber/fiber/v2"
 )
 
-func ParseRequestBody(class interface{}) (string, error) {
+type Response struct {
+	Body interface{}
+}
 
-	// classType := reflect.TypeOf(class)
+func ParseRequestBody(class interface{}, c *fiber.Ctx) (Response, error) {
 
-	fmt.Println(class)
+	if class == nil {
+		return Response{}, errors.New("empty class given")
+	}
 
-	// user := new(classType)
+	// Creating an instance based on the type of the provided class
+	ResponseData := reflect.New(reflect.TypeOf(class)).Interface()
 
-	// //Parsing the userData struct into the bodyParser to get the inserted values
-	// if err := c.BodyParser(user); err != nil {
-	// 	fmt.Println("error = ", err)
-	// 	return nil
-	// }
+	// Parsing the userData struct into the bodyParser to get the inserted values
+	if err := c.BodyParser(ResponseData); err != nil {
+		return Response{}, err
+	}
 
-	return "test", nil
+	response := Response{Body: ResponseData}
+	return response, nil
 }
