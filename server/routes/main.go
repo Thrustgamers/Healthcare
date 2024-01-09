@@ -1,13 +1,10 @@
 package routes
 
 import (
-	"api/database"
 	loginhandlers "api/handlers/login"
 
 	"github.com/gofiber/fiber/v2"
 )
-
-var DB = database.Database
 
 func SetupRoutes(app *fiber.App) {
 
