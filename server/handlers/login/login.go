@@ -15,6 +15,7 @@ func Login(c *fiber.Ctx) error {
 	sessionID := utils.NewUniqueIDGenerator().GenerateID()
 	UserID := len(storage.SessionManager) + 1
 
+	//Defining all userData
 	userData := storage.UserData{UserID: UserID, Token: sessionID}
 
 	// Store session data in the session manager
@@ -30,12 +31,13 @@ func Logout(c *fiber.Ctx) error {
 
 	user := new(storage.UserData)
 
+	//Parsing the userData struct into the bodyParser to get the inserted values
 	if err := c.BodyParser(user); err != nil {
 		fmt.Println("error = ", err)
 		return c.SendStatus(200)
 	}
 
-	//Check if the user is in the session manager
+	// Check if the user is in the session manager
 	_, ok := storage.SessionManager[user.UserID]
 
 	if ok {

@@ -1,11 +1,12 @@
 package database
 
 import (
+	"api/models"
 	"fmt"
 	"log"
 	"time"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -17,19 +18,26 @@ var Database DbInstance
 
 func ConnectToDb() {
 
-	db_user := "root"
-	db_host := "127.0.0.1"
-	db_port := "3306"
-	db_name := "inventory"
-	location_currentzone, location_err := time.LoadLocation("Local")
+	// {
+	// 	"label": "healthcare",
+	// 	"host": "localhost",
+	// 	"user": "postgres",
+	// 	"port": 5432,
+	// 	"ssl": false,
+	// 	"database": "",
+	// 	"password": "root"
+	// }
 
-	if location_err != nil {
-		log.Fatal(location_err)
-	}
+	db_host := "localhost"
+	db_user := "postgres"
+	db_pass := "root"
+	db_name := "healthcare"
+	db_port := "5432"
+	current_time := time.Now()
+	location_currentzone, _ := current_time.Zone()
 
-	connection := fmt.Sprintf("%s:@tcp(%s:%s)/%s?parseTime=true&loc=%s", db_user, db_host, db_port, db_name, location_currentzone)
-
-	db, err := gorm.Open(mysql.Open(connection), &gorm.Config{})
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=%s", db_user, db_pass, db_host, db_port, db_name, location_currentzone)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err)
@@ -37,7 +45,7 @@ func ConnectToDb() {
 	}
 
 	//Migrate the schema
-	// db.AutoMigrate(&models.Ranks{}, &models.Users{}, &models.Medication{})
+	db.AutoMigrate(&models.Ranks{}, &models.Users{}, &models.Medication{})
 
 	// Create
 	// db.Create(&Product{Code: "D42", Price: 100})
