@@ -1,0 +1,41 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+
+		"rules": {
+
+			"complexity" : {
+				"recommended": true
+			},
+
+			"correctness" : {
+				"recommended": true
+			},
+		
+			"performance": {
+				"recommended": true
+			},
+
+			"style": {
+				"recommended": true
+			},
+
+			"security" : {
+				"recommended": true
+			},
+
+			"suspicious" : {
+				"recommended": true
+			},
+
+			"nursery": {
+				"recommended": true
+			}
+
+		}
+	}
+}
