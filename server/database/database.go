@@ -3,9 +3,11 @@ package database
 import (
 	"api/models"
 	"fmt"
-	"log"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,21 +20,17 @@ var Database DbInstance
 
 func ConnectToDb() {
 
-	// {
-	// 	"label": "healthcare",
-	// 	"host": "localhost",
-	// 	"user": "postgres",
-	// 	"port": 5432,
-	// 	"ssl": false,
-	// 	"database": "",
-	// 	"password": "root"
-	// }
+	//Preparing dotenv files
+	err := godotenv.Load()
+	if err != nil {
+		log.Error().Err(err)
+	}
 
-	db_host := "localhost"
-	db_user := "postgres"
-	db_pass := "root"
-	db_name := "healthcare"
-	db_port := "5432"
+	db_host := os.Getenv("DB_HOST")
+	db_user := os.Getenv("DB_USER")
+	db_pass := os.Getenv("DB_PASS")
+	db_name := os.Getenv("DB_NAME")
+	db_port := os.Getenv("DB_PORT")
 	current_time := time.Now()
 	location_currentzone, _ := current_time.Zone()
 
@@ -40,8 +38,8 @@ func ConnectToDb() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Fatal(err)
-		log.Fatal("Failed to connect database")
+		log.Error().Err(err)
+		os.Exit(2)
 	}
 
 	//Migrate the schema
@@ -65,6 +63,4 @@ func ConnectToDb() {
 	// db.Delete(&product, 1)
 
 	Database = DbInstance{Db: db}
-
-	// Init()
 }

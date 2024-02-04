@@ -3,20 +3,18 @@ package main
 import (
 	"api/database"
 	"api/routes"
-	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
-	"github.com/highlight/highlight/sdk/highlight-go"
-	highlightFiber "github.com/highlight/highlight/sdk/highlight-go/middleware/fiber"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	database.ConnectToDb()
 
-	highlight.SetProjectID("lgx91qqg")
-	highlight.Start(highlight.WithServiceName("go_webshop"), highlight.WithServiceVersion("git-sha"))
+	//Preparing database
+	database.ConnectToDb()
 
 	app := fiber.New(fiber.Config{
 		Prefork:       false,
@@ -29,9 +27,13 @@ func main() {
 	app.Use(cors.New())
 	app.Get("/metrics", monitor.New())
 	// app.Static("/", "./web/dist/")
-	app.Use(highlightFiber.Middleware())
 
 	routes.SetupRoutes(app)
 
-	log.Fatal(app.Listen(":3000"))
+	if err := app.Listen(":3000"); err != nil {
+		log.Error().Err(err)
+		os.Exit(3)
+	}
+
+	log.Info().Msg("Server launched on port 3000")
 }
