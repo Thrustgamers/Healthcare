@@ -12,7 +12,7 @@ import (
 func Login(c *fiber.Ctx) error {
 
 	//Generating a unique session identifier for further authentication
-	sessionID := utils.NewUniqueIDGenerator().GenerateID()
+	sessionID := utils.GenerateUniqueID()
 	UserID := len(storage.SessionManager) + 1
 
 	//Defining all userData
