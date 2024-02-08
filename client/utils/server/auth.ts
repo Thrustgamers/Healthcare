@@ -1,35 +1,56 @@
 import { useAtom } from 'jotai';
 import { SessionData } from '../atoms';
-// import { request } from './request';
+import { request } from './request';
 
 type loginData = {
     employeeId: string
     password: string
 }
 
+type serverData = {
+
+}
+
 export class auth {
 
     login(data: loginData) {
-        return this.loginhandler(data)
+        return this.loginHandler(data)
     }
 
     logout() {
-        this.logouthandler()
+        this.logoutHandler()
     }
 
-    private async loginhandler (data: loginData) {
+    checkStatus() {
+        this.checkStatusHandler()
+    }
+
+    private async loginHandler (data: loginData) {
+
+        request.post('/login', data).finally((response) => {
+
+        })
 
 
 
     }
 
-    private async logouthandler () {
+    private async logoutHandler () {
         const [value] = useAtom(SessionData)
 
-        // const status = await request.get()
+        const status = await request.post('/logout', value)
 
         return ""
 
+    }
+
+    private async checkStatusHandler() {
+
+        const [value] = useAtom(SessionData)
+
+        const status = await request.post('/status', value)
+
+        return ""
     }
 
 }
