@@ -21,8 +21,7 @@ var Database DbInstance
 func ConnectToDb() {
 
 	//Preparing dotenv files
-	err := godotenv.Load()
-	if err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Error().Err(err)
 	}
 
