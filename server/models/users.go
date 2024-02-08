@@ -10,7 +10,7 @@ type Users struct {
 	ID         uint   `gorm:"primaryKey"`
 	Rank       Ranks  `gorm:"embedded"`
 	Name       string `json:"name"`
-	EmployeeId int16  `json:"employeeid"`
+	EmployeeId int    `json:"employeeid"`
 	Password   string `json:"password"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
