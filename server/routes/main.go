@@ -6,9 +6,28 @@ import (
 	"api/middleware"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 )
 
 func SetupRoutes(app *fiber.App) {
+
+	//Preparing dotenv files
+	if err := godotenv.Load(); err != nil {
+		log.Error().Err(err)
+	}
+
+	// app.Use(func(c *fiber.Ctx) {
+
+	// 	header := c.Request().Header
+	// 	key := os.Getenv("SECRET_KEY")
+
+	// 	if header != key {
+	// 		return err
+	// 	}
+
+	// 	c.Next()
+	// })
 
 	//Login
 	app.Get("/login", loginhandlers.Login)
