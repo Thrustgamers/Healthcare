@@ -8,11 +8,17 @@ type ServerResponse struct {
 	Error  string      `json:"error,omitempty"`
 }
 
-func SendSuccessResponse(c *fiber.Ctx, data interface{}) error {
-	return c.Status(fiber.StatusOK).JSON(ServerResponse{
+func SendSuccessResponse(c *fiber.Ctx, data interface{}, cookies ...*fiber.Cookie) error {
+	resp := ServerResponse{
 		Status: "success",
 		Data:   data,
-	})
+	}
+
+	for _, cookie := range cookies {
+		c.Cookie(cookie)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(resp)
 }
 
 func SendErrorResponse(c *fiber.Ctx, statusCode int, err error) error {
