@@ -7,11 +7,18 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 )
 
 func main() {
+
+	//Preparing dotenv files
+	if err := godotenv.Load(); err != nil {
+		log.Error().Err(err)
+	}
 
 	//Preparing database
 	database.ConnectToDb()
@@ -34,6 +41,10 @@ func main() {
 		log.Error().Err(err)
 		os.Exit(3)
 	}
+
+	app.Use(encryptcookie.New(encryptcookie.Config{
+		Key: os.Getenv("COOKIE_ENCRYPT"),
+	}))
 
 	log.Info().Msg("Server launched on port 3000")
 }
