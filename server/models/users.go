@@ -7,8 +7,9 @@ import (
 )
 
 type Users struct {
-	ID         uint   `gorm:"primaryKey"`
-	Rank       Ranks  `gorm:"embedded"`
+	ID         uint `gorm:"primaryKey"`
+	Rank       int
+	RankRefer  Ranks  `gorm:"foreignKey:Rank"`
 	Name       string `json:"name"`
 	EmployeeId int    `json:"employeeid"`
 	Password   string `json:"password"`
