@@ -8,13 +8,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type loginDetail struct {
-	EmployeeId int
-	Password   string
+	EmployeeId int    `json:"employeeId"`
+	Name       string `json:"name,omitempty"`
+	Password   string `json:"password,omitempty"`
 }
 
 func Login(c *fiber.Ctx) error {
@@ -30,7 +34,7 @@ func Login(c *fiber.Ctx) error {
 	fmt.Println(user)
 
 	//Check Database for correct credentials and password
-	data := database.Database.Db.Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password})
+	data := database.Database.Db.Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password}).First(&models.Users{})
 
 	fmt.Println(data.RowsAffected)
 
@@ -51,14 +55,26 @@ func Login(c *fiber.Ctx) error {
 	storage.SessionManager[UserID] = userData
 
 	//Define the data that is getting send back to the frontend
-	returnData := storage.UserData{
-		UserID: UserID,
-		Token:  sessionID,
+	returnData := loginDetail{
+		Name: "test",
 	}
 
-	fmt.Printf(fmt.Sprintf("Login successful. Information: sessionID: %d, UserID: %d", sessionID, UserID))
+	// Serialize user data to JSON
+	userDataJSON, err := json.Marshal(userData)
+	if err != nil {
+		log.Fatal().Msg("Serializing user data to json errored")
+	}
 
-	return utils.SendSuccessResponse(c, returnData)
+	//Creating authentication cookie
+	cookie := new(fiber.Cookie)
+	cookie.Name = "authentication"
+	cookie.Value = string(userDataJSON)
+	cookie.Expires = time.Now().Add(24 * time.Hour)
+	cookie.Secure = true
+
+	log.Info().Msg(fmt.Sprintf("Login successful. Information: sessionID: %d, UserID: %d", sessionID, UserID))
+
+	return utils.SendSuccessResponse(c, returnData, cookie)
 }
 
 func GetUsers(c *fiber.Ctx) error {
