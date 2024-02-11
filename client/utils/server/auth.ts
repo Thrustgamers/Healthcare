@@ -1,5 +1,3 @@
-import { useAtom } from 'jotai';
-import { SessionData } from '../atoms';
 import { request } from './request';
 
 type loginData = {
@@ -7,50 +5,38 @@ type loginData = {
     password: string
 }
 
-type serverData = {
-
-}
-
 export class auth {
 
-    login(data: loginData) {
-        return this.loginHandler(data)
+    async login(data: loginData) {
+        return await this.loginHandler(data)
     }
 
-    logout() {
-        this.logoutHandler()
+    async logout() {
+        return await this.logoutHandler()
     }
 
-    checkStatus() {
-        this.checkStatusHandler()
+    async checkStatus() {
+        return await this.checkStatusHandler()
     }
 
     private async loginHandler (data: loginData) {
 
-        request.post('/login', data).finally((response) => {
+        request.post('/login', data).then(() => {
 
         })
-
-
 
     }
 
     private async logoutHandler () {
-        const [value] = useAtom(SessionData)
-
-        const status = await request.post('/logout', value)
-
-        return ""
-
+        const response = await request.post('/logout');
+        return response.status;
     }
 
     private async checkStatusHandler() {
+        const response = await request.post('/statuscheck')
 
-        const [value] = useAtom(SessionData)
-
-        const status = await request.post('/status', value)
-
-        return ""
+        console.log(response)
+        return response.data.data.status === "success"
     }
 
 }
