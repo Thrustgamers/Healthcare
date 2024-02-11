@@ -32,6 +32,7 @@ func SetupRoutes(app *fiber.App) {
 	//Login
 	app.Get("/login", loginhandlers.Login)
 	app.Get("/logout", loginhandlers.Logout)
+	app.Get("/statuscheck", loginhandlers.StatusCheck)
 	app.Get("/sessionStorage", loginhandlers.GetUsers)
 
 	user := app.Group("/user", middleware.SessionAuth)
