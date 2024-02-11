@@ -27,16 +27,13 @@ func Login(c *fiber.Ctx) error {
 
 	//Parsing the loginDetail struct into the bodyParser to get the inserted values
 	if err := c.BodyParser(user); err != nil {
-		fmt.Println("error = ", err)
+		log.Error().Err(err)
 		return utils.SendErrorResponse(c, 404, err)
 	}
 
-	fmt.Println(user)
-
 	//Check Database for correct credentials and password
-	data := database.Database.Db.Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password}).First(&models.Users{})
-
-	fmt.Println(data.RowsAffected)
+	dbData := &models.Users{}
+	data := database.Database.Db.Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password}).First(dbData)
 
 	//If no records send error response to frontend
 	if data.RowsAffected == 0 {
@@ -44,19 +41,24 @@ func Login(c *fiber.Ctx) error {
 		return utils.SendErrorResponse(c, 404, err)
 	}
 
+	//Check if session already exists
+	if storage.DoesSessionExist(dbData.EmployeeId) {
+		log.Warn().Msg("Login attempted on already active session")
+		return utils.SendErrorResponse(c, 404, errors.New("error occured, session already active (contact support)"))
+	}
+
 	//Generating a unique session identifier for further authentication
 	sessionID := utils.GenerateUniqueID()
-	UserID := len(storage.SessionManager) + 1
+	UserID := len(storage.SessionManager)
+
+	isAdmin := dbData.Admin == "YES"
 
 	//Defining all userData
-	userData := storage.UserData{UserID: UserID, Token: sessionID}
-
-	// Store session data in the session manager
-	storage.SessionManager[UserID] = userData
-
-	//Define the data that is getting send back to the frontend
-	returnData := loginDetail{
-		Name: "test",
+	userData := storage.UserData{
+		UserID:     UserID,
+		Token:      sessionID,
+		Admin:      isAdmin,
+		EmployeeId: dbData.EmployeeId,
 	}
 
 	// Serialize user data to JSON
@@ -65,12 +67,22 @@ func Login(c *fiber.Ctx) error {
 		log.Fatal().Msg("Serializing user data to json errored")
 	}
 
+	// Store session data in the session manager
+	storage.SessionManager[UserID] = userData
+
+	//Define the data that is getting send back to the frontend
+	returnData := loginDetail{
+		Name:       dbData.Name,
+		EmployeeId: dbData.EmployeeId,
+	}
+
 	//Creating authentication cookie
-	cookie := new(fiber.Cookie)
-	cookie.Name = "authentication"
-	cookie.Value = string(userDataJSON)
-	cookie.Expires = time.Now().Add(24 * time.Hour)
-	cookie.Secure = true
+	cookie := &fiber.Cookie{
+		Name:    "authentication",
+		Value:   string(userDataJSON),
+		Expires: time.Now().Add(24 * time.Hour),
+		Secure:  true,
+	}
 
 	log.Info().Msg(fmt.Sprintf("Login successful. Information: sessionID: %d, UserID: %d", sessionID, UserID))
 
