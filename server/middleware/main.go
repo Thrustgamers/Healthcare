@@ -33,8 +33,7 @@ func SessionAuth(c *fiber.Ctx) error {
 
 		if data, ok := storage.SessionManager[jsonData.UserID]; ok && data.Token == jsonData.Token {
 			fmt.Println("Authentication Succeeded")
-			c.Next()
-			return utils.SendSuccessResponse(c, "")
+			return c.Next()
 		} else {
 			fmt.Println(ok)
 			log.Warn().Msg("Unautherized login attempted")
