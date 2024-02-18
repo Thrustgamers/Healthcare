@@ -4,6 +4,7 @@ import (
 	loginhandlers "api/handlers/login"
 	userhandlers "api/handlers/users"
 	"api/middleware"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -17,22 +18,16 @@ func SetupRoutes(app *fiber.App) {
 		log.Error().Err(err)
 	}
 
-	// app.Use(func(c *fiber.Ctx) {
+	app.Use(func(c *fiber.Ctx) error {
+		fmt.Println(fmt.Printf("Incoming request to host:%s", c.OriginalURL()))
 
-	// 	header := c.Request().Header
-	// 	key := os.Getenv("SECRET_KEY")
-
-	// 	if header != key {
-	// 		return err
-	// 	}
-
-	// 	c.Next()
-	// })
+		return c.Next()
+	})
 
 	//Login
 	app.Get("/login", loginhandlers.Login)
 	app.Get("/logout", loginhandlers.Logout)
-	app.Get("/statuscheck", loginhandlers.StatusCheck)
+	app.Post("/statuscheck", loginhandlers.StatusCheck)
 	app.Get("/sessionStorage", loginhandlers.GetUsers)
 
 	user := app.Group("/user", middleware.SessionAuth)
