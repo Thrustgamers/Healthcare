@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog/log"
@@ -18,7 +17,6 @@ type authentication struct {
 }
 
 func SessionAuth(c *fiber.Ctx) error {
-
 	// Retrieve session ID from cookies
 	data := c.Cookies("authentication")
 
@@ -43,34 +41,40 @@ func SessionAuth(c *fiber.Ctx) error {
 
 	}
 
-	log.Warn().Msg("Unautherized login attempted")
+	log.Warn().Msg("Unautherized request attempted")
 
 	// Return unauthorized status if session is not found
 	return utils.SendErrorResponse(c, 404, errors.New("authentication failed"))
 }
 
 func AdminAuth(c *fiber.Ctx) error {
-
 	// Retrieve session ID from cookies
-	UserID, UserIDerr := strconv.Atoi(c.Cookies("UserID"))
-	Token, Tokenerr := strconv.Atoi(c.Cookies("Token"))
+	data := c.Cookies("authentication")
 
-	if UserIDerr != nil {
-		log.Info().Err(UserIDerr)
+	if data != "" {
+
+		var jsonData authentication
+
+		err := json.Unmarshal([]byte(data), &jsonData)
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+
+		if data, ok := storage.SessionManager[jsonData.UserID]; ok && data.Token == jsonData.Token && data.Admin {
+			fmt.Println("Authentication Succeeded")
+			c.Next()
+			return utils.SendSuccessResponse(c, "")
+		} else {
+			fmt.Println(ok)
+			log.Warn().Msg("Unautherized login attempted")
+			return utils.SendErrorResponse(c, 404, errors.New("authentication failed"))
+		}
+
 	}
 
-	if Tokenerr != nil {
-		log.Info().Err(Tokenerr)
-	}
-
-	if data, ok := storage.SessionManager[UserID]; ok && data.Token == Token && data.Admin {
-		c.Next()
-	}
-
-	log.Warn().Msg("Unautherized login attempted")
+	log.Warn().Msg("Unautherized admin request attempted")
 
 	// Return unauthorized status if session is not found
 	err := errors.New("admin authentication failed")
 	return utils.SendErrorResponse(c, 404, err)
-
 }
