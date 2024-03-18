@@ -1,6 +1,6 @@
 # healthcare web system (WIP)
 
-- this project represents my journey about collecting and using my knowledge of React TypeScript and Golang to create a application that is as optimized and secure as i can make it.
+[![wakatime](https://wakatime.com/badge/user/81fc6a55-00e9-44a0-af36-d8740dfd90ce/project/018c21ae-4195-4196-860e-94f4ef5ad6a8.svg)](https://wakatime.com/badge/user/81fc6a55-00e9-44a0-af36-d8740dfd90ce/project/018c21ae-4195-4196-860e-94f4ef5ad6a8)
 
 #### requirements:
 
