@@ -4,11 +4,11 @@
 
 ## Requirements
 1.  Package manager (npm, yarn, bun, pnpm)
-2.  golang (minimal 1.21.0)
-3.  postgress 16, mysql/mariadb, sql server 2022
+2.  Golang (minimal 1.21.0)
+3.  Postgress 16, mysql/mariadb, sql server 2022
 ## Development installation
-1.  clone the package from github
-2.  create a .env file in the _server folder_ with the following structure
+1.  Clone the package from github
+2.  Create a .env file in the _server folder_ with the following structure
 
     |                |        |                                                      |
     | -------------- | ------ | ---------------------------------------------------- |
@@ -20,6 +20,6 @@
     | DB_PORT        | string | The database port                                    |
     | DB_DRIVER      | string | The database provider (Postgres, mysql, sqlServer)   |
 
-3.  run the install command on your package manager in the _web folder_
-4.  run the `go mod download` in the _server folder_
-5.  the server can be started using `air` and the frontend can be started using the dev command using your package manager
+3.  Run the install command on your package manager in the _web folder_
+4.  Run the `go mod download` in the _server folder_
+5.  The server can be started using `air` and the frontend can be started using the dev command using your package manager
