@@ -44,7 +44,7 @@ func getDB() (*gorm.DB, error) {
 	var driver gorm.Dialector
 	switch db_driver {
 	case "postgres":
-		dsn = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable?timezone=%s", db_user, db_pass, db_host, db_port, db_name, location_currentzone)
+		dsn = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=%s", db_user, db_pass, db_host, db_port, db_name, location_currentzone)
 		driver = postgres.Open(dsn)
 	case "sqlServer":
 		dsn = fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", db_user, db_pass, db_host, db_port, db_name)
