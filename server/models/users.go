@@ -13,7 +13,6 @@ type Users struct {
 	Name       string `json:"name"`
 	EmployeeId int    `json:"employeeid"`
 	Password   string `json:"password"`
-	Admin      string `gorm:"default:'NO'" json:"admin"`
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  gorm.DeletedAt `gorm:"index"`

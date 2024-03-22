@@ -22,38 +22,42 @@ type loginDetail struct {
 }
 
 func Login(c *fiber.Ctx) error {
-
 	user := new(loginDetail)
 
-	//Parsing the loginDetail struct into the bodyParser to get the inserted values
+	// Parsing the loginDetail struct into the bodyParser to get the inserted values
 	if err := c.BodyParser(user); err != nil {
 		log.Error().Err(err)
 		return utils.SendErrorResponse(c, 404, err)
 	}
 
-	//Check Database for correct credentials and password
+	// Check Database for correct credentials and password
 	dbData := &models.Users{}
 	data := database.Database.Db.Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password}).First(dbData)
 
-	//If no records send error response to frontend
+	// If no records send error response to frontend
 	if data.RowsAffected == 0 {
 		err := errors.New("invalid credentials")
 		return utils.SendErrorResponse(c, 404, err)
 	}
 
-	//Check if session already exists
+	// Check if session already exists
 	if storage.DoesSessionExist(dbData.EmployeeId) {
 		log.Warn().Msg("Login attempted on already active session")
 		return utils.SendErrorResponse(c, 404, errors.New("error occured, session already active (contact support)"))
 	}
 
-	//Generating a unique session identifier for further authentication
+	// Generating a unique session identifier for further authentication
 	sessionID := utils.GenerateUniqueID()
 	UserID := len(storage.SessionManager)
 
-	isAdmin := dbData.Admin == "YES"
+	dbRankData := &models.Ranks{}
+	database.Database.Db.Where(&models.Ranks{ID: uint(dbData.Rank)}).First(dbRankData)
 
-	//Defining all userData
+	fmt.Println(dbRankData)
+
+	isAdmin := dbRankData.Admin == "YES"
+
+	// Defining all userData
 	userData := storage.UserData{
 		UserID:     UserID,
 		Token:      sessionID,
@@ -70,13 +74,13 @@ func Login(c *fiber.Ctx) error {
 	// Store session data in the session manager
 	storage.SessionManager[UserID] = userData
 
-	//Define the data that is getting send back to the frontend
+	// Define the data that is getting send back to the frontend
 	returnData := loginDetail{
 		Name:       dbData.Name,
 		EmployeeId: dbData.EmployeeId,
 	}
 
-	//Creating authentication cookie
+	// Creating authentication cookie
 	cookie := &fiber.Cookie{
 		Name:    "authentication",
 		Value:   string(userDataJSON),
@@ -90,7 +94,6 @@ func Login(c *fiber.Ctx) error {
 }
 
 func GetUsers(c *fiber.Ctx) error {
-
 	bs, _ := json.Marshal(storage.SessionManager)
 	fmt.Println(string(bs))
 

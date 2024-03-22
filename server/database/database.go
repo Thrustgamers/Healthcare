@@ -78,7 +78,7 @@ func ConnectToDb() {
 	db.AutoMigrate(&models.Ranks{}, &models.Users{}, &models.Medication{})
 
 	// Insert testing values
-	db.FirstOrCreate(&models.Ranks{}, models.Ranks{Name: "Admin"})
+	db.FirstOrCreate(&models.Ranks{}, models.Ranks{Name: "Admin", Admin: "YES"})
 	db.FirstOrCreate(&models.Users{}, models.Users{Rank: 1, Name: "Test", EmployeeId: 12345678, Password: "test"})
 
 	Database = DbInstance{Db: db}
