@@ -75,7 +75,7 @@ func ConnectToDb() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.Ranks{}, &models.Users{}, &models.Medication{})
+	db.AutoMigrate(&models.Ranks{}, &models.Users{}, &models.Patient{})
 
 	// Insert testing values
 	db.FirstOrCreate(&models.Ranks{}, models.Ranks{Name: "Admin", Admin: "YES"})
