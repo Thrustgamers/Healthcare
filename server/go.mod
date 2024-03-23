@@ -39,7 +39,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
-	github.com/cortexproject/cortex v1.2.1-0.20200803161316-7014ff11ed70 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
@@ -61,7 +60,6 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/mux v1.7.3 // indirect
-	github.com/grafana/loki v1.6.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.18.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
