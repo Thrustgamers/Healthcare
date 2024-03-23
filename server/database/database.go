@@ -38,7 +38,7 @@ func getDB() (*gorm.DB, error) {
 		return nil, errors.New("missing database information")
 	}
 
-	fmt.Printf("Database driver: %s found ", db_driver)
+	fmt.Println(fmt.Printf("Database driver: %s found ", db_driver))
 
 	var dsn string
 	var driver gorm.Dialector
@@ -75,11 +75,51 @@ func ConnectToDb() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&models.Ranks{}, &models.Users{}, &models.Patient{})
+	db.AutoMigrate(
+		&models.Ranks{},
+		&models.Users{},
+		&models.Patient{},
+		&models.MedicalHistory{},
+		&models.Appointments{},
+	)
 
+	// Insert to create a admin rank for the test staff member
 	// Insert testing values
-	db.FirstOrCreate(&models.Ranks{}, models.Ranks{Name: "Admin", Admin: "YES"})
-	db.FirstOrCreate(&models.Users{}, models.Users{Rank: 1, Name: "Test", EmployeeId: 12345678, Password: "test"})
+	//db.FirstOrCreate(
+	//	&models.Ranks{},
+	//	models.Ranks{
+	//		Name:  "Admin",
+	//		Admin: "YES",
+	//	},
+	//)
+
+	// Insert to create a test staff member
+	//db.FirstOrCreate(
+	//	&models.Users{},
+	//	models.Users{
+	//		Rank:       1,
+	//		Name:       "Test",
+	//		EmployeeId: 12345678,
+	//		Password:   "test",
+	//	},
+	//)
+	//
+
+	// Insert to create a test patient
+	//db.FirstOrCreate(&models.Patient{
+	//	Name: "Test Test",
+	//}, models.Patient{
+	//	Name:            "Test Test",
+	//	Gender:          "Male",
+	//	DateOfBirth:     time.Now(),
+	//	Address:         "Brocklane 10",
+	//	PhoneNumber:     "1234567890",
+	//	Email:           "test@example.com",
+	//	SocialSecurity:  "1234567890",
+	//	InsuranceNumber: "1234567890",
+	//	UpdatedBy:       "Doctor 1",
+	//	UpdatedAt:       time.Now(),
+	//})
 
 	Database = DbInstance{Db: db}
 }

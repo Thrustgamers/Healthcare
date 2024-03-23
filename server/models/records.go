@@ -11,28 +11,41 @@ type Patient struct {
 	PhoneNumber     string    `json:"phone_number"`
 	Email           string    `json:"email"`
 	SocialSecurity  string    `json:"social_security"`
-	MedicalRecord   string    `json:"medical_record"`
 	InsuranceNumber string    `json:"insurance_number"`
-	MedicalReports  string    `json:"medical_reports"`
-	Forms           string    `json:"forms"`
 	UpdatedBy       string    `json:"updated_by"`
 	UpdatedAt       time.Time
+	MedicalHistory  []MedicalHistory `gorm:"foreignKey:PatientID"`
+	MedicalReports  []MedicalReports `gorm:"foreignKey:PatientID"`
+	MedicalForms    []MedicalForms   `gorm:"foreignKey:PatientID"`
+	Appointments    []Appointments   `gorm:"foreignKey:PatientID"`
 }
 
 type MedicalHistory struct {
 	PatientID           uint   `gorm:"primaryKey"`
-	PatientName         string `json:"patient_name"`
 	Allergies           string `json:"allergies"`
 	Medications         string `json:"medications"`
-	PastMedicalHistory  string `json:"past_medical_history"`
+	PastMedicalHistory  string `json:"past_medical_history""`
 	FamilyHistory       string `json:"family_history"`
 	ImmunizationHistory string `json:"immunization_history"`
 	DietaryPreferences  string `json:"dietary_preferences"`
 }
 
+type MedicalReports struct {
+	PatientID uint      `gorm:"primaryKey"`
+	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
+	Content   string    `json:"content"`
+}
+
+type MedicalForms struct {
+	PatientID uint      `gorm:"primaryKey"`
+	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
+	Content   string    `json:"content"`
+}
+
 type Appointments struct {
 	PatientID          uint      `gorm:"primaryKey"`
-	PatientName        string    `json:"patient_name"`
 	AppointmentTime    time.Time `json:"appointment_time"`
 	VisitNotes         string    `json:"visit_notes"`
 	ConsultationReport string    `json:"consultation_report"`
