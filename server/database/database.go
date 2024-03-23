@@ -81,6 +81,8 @@ func ConnectToDb() {
 		&models.Patient{},
 		&models.MedicalHistory{},
 		&models.Appointments{},
+		&models.MedicalReports{},
+		&models.MedicalForms{},
 	)
 
 	// Insert to create a admin rank for the test staff member
