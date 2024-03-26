@@ -23,3 +23,6 @@
 3.  Run the install command on your package manager in the _web folder_
 4.  Run the `go mod download` in the _server folder_
 5.  The server can be started using `air` and the frontend can be started using the dev command using your package manager
+
+## Feature request
+- If you would like to see a feature added or want to have a converstation about it to see what is possible, don't hesitate to make a feature request! All input is appreacated
