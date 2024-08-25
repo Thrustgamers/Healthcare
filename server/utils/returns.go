@@ -27,3 +27,10 @@ func SendErrorResponse(c *fiber.Ctx, statusCode int, err error) error {
 		Error:  err.Error(),
 	})
 }
+
+func SendWrongCreditionals(c *fiber.Ctx, errorMessage string) error {
+	return c.Status(fiber.StatusUnauthorized).JSON(ServerResponse{
+		Status: "wrong credentials",
+		Error:  errorMessage,
+	})
+}
