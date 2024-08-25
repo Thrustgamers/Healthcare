@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,6 +23,7 @@ type loginDetail struct {
 }
 
 func Login(c *fiber.Ctx) error {
+
 	user := new(loginDetail)
 
 	// Parsing the loginDetail struct into the bodyParser to get the inserted values
@@ -37,6 +39,7 @@ func Login(c *fiber.Ctx) error {
 	// If no records send error response to frontend
 	if data.RowsAffected == 0 {
 		err := errors.New("invalid credentials")
+
 		return utils.SendErrorResponse(c, 404, err)
 	}
 
@@ -47,14 +50,11 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// Generating a unique session identifier for further authentication
-	sessionID := utils.GenerateUniqueID()
+	sessionID := uuid.New()
 	UserID := len(storage.SessionManager)
 
 	dbRankData := &models.Ranks{}
 	database.Database.Db.Where(&models.Ranks{ID: uint(dbData.Rank)}).First(dbRankData)
-
-	fmt.Println(dbRankData)
-
 	isAdmin := dbRankData.Admin == "YES"
 
 	// Defining all userData
@@ -66,19 +66,16 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// Serialize user data to JSON
-	userDataJSON, err := json.Marshal(userData)
+	userDataJSON, err := json.Marshal(storage.UserData{
+		UserID: UserID,
+		Token:  sessionID,
+	})
 	if err != nil {
 		log.Fatal().Msg("Serializing user data to json errored")
 	}
 
 	// Store session data in the session manager
 	storage.SessionManager[UserID] = userData
-
-	// Define the data that is getting send back to the frontend
-	returnData := loginDetail{
-		Name:       dbData.Name,
-		EmployeeId: dbData.EmployeeId,
-	}
 
 	// Creating authentication cookie
 	cookie := &fiber.Cookie{
@@ -90,7 +87,10 @@ func Login(c *fiber.Ctx) error {
 
 	log.Info().Msg(fmt.Sprintf("Login successful. Information: sessionID: %d, UserID: %d", sessionID, UserID))
 
-	return utils.SendSuccessResponse(c, returnData, cookie)
+	return utils.SendSuccessResponse(c, loginDetail{
+		Name:       dbData.Name,
+		EmployeeId: dbData.EmployeeId,
+	}, cookie)
 }
 
 func GetUsers(c *fiber.Ctx) error {
