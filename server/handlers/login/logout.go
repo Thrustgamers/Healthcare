@@ -9,7 +9,7 @@ import (
 
 func Logout(c *fiber.Ctx) error {
 
-	user := new(storage.UserData)
+	user := new(storage.UserSession)
 
 	//Parsing the userData struct into the bodyParser to get the inserted values
 	if err := c.BodyParser(user); err != nil {
@@ -20,6 +20,7 @@ func Logout(c *fiber.Ctx) error {
 	// Check if the user is in the session manager
 	_, ok := storage.SessionManager[user.UserID]
 
+	// Remove user from the session manager
 	if ok {
 		delete(storage.SessionManager, user.UserID)
 		return c.SendString("Successfully logged out")

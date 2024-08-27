@@ -1,7 +1,7 @@
 package loginhandlers
 
 import (
-	"api/database"
+	db "api/database"
 	"api/models"
 	"api/storage"
 	"api/utils"
@@ -10,10 +10,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 type loginDetail struct {
@@ -32,15 +31,17 @@ func Login(c *fiber.Ctx) error {
 		return utils.SendErrorResponse(c, 404, err)
 	}
 
+	//locally define DB variable
+	db := db.Database.Db
+
 	// Check Database for correct credentials and password
+	// Also check for rank of person
 	dbData := &models.Users{}
-	data := database.Database.Db.Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password}).First(dbData)
+	err := db.Preload("RankRefer").Where(&models.Users{EmployeeId: user.EmployeeId, Password: user.Password}).First(dbData).Error
 
-	// If no records send error response to frontend
-	if data.RowsAffected == 0 {
-		err := errors.New("invalid credentials")
-
-		return utils.SendErrorResponse(c, 404, err)
+	if err != nil {
+		log.Error().Err(err).Msg("Invalid credentials")
+		return utils.SendErrorResponse(c, 401, errors.New("invalid credentials"))
 	}
 
 	// Check if session already exists
@@ -53,20 +54,16 @@ func Login(c *fiber.Ctx) error {
 	sessionID := uuid.New()
 	UserID := len(storage.SessionManager)
 
-	dbRankData := &models.Ranks{}
-	database.Database.Db.Where(&models.Ranks{ID: uint(dbData.Rank)}).First(dbRankData)
-	isAdmin := dbRankData.Admin == "YES"
-
 	// Defining all userData
-	userData := storage.UserData{
+	userData := storage.UserSession{
 		UserID:     UserID,
 		Token:      sessionID,
-		Admin:      isAdmin,
+		Admin:      dbData.RankRefer.Admin == "YES",
 		EmployeeId: dbData.EmployeeId,
 	}
 
 	// Serialize user data to JSON
-	userDataJSON, err := json.Marshal(storage.UserData{
+	userDataJSON, err := json.Marshal(storage.UserSession{
 		UserID: UserID,
 		Token:  sessionID,
 	})
