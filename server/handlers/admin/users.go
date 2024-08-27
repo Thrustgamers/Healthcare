@@ -7,12 +7,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func getBlockedIps(c *fiber.Ctx) error {
+func GetBlockedIps(c *fiber.Ctx) error {
 
 	return utils.SendSuccessResponse(c, security.IpManager)
 }
 
-func removeBlockedIp(c *fiber.Ctx) error {
+func RemoveBlockedIp(c *fiber.Ctx) error {
 
 	return utils.SendSuccessResponse(c, "succesfully removed ip")
 }
