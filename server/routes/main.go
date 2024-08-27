@@ -1,9 +1,12 @@
 package routes
 
 import (
+	adminhandlers "api/handlers/admin"
 	loginhandlers "api/handlers/login"
+	testhandlers "api/handlers/test"
 	userhandlers "api/handlers/users"
 	"api/middleware"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
@@ -26,8 +29,12 @@ func SetupRoutes(app *fiber.App) {
 	user.Get("/get", userhandlers.Get)
 
 	//Admin
-	admin := app.Group("/admin", middleware.SessionAuth)
-	admin.Get("/", middleware.AdminAuth)
+	admin := app.Group("/admin", middleware.AdminAuth)
+	admin.Get("/", adminhandlers.GetBlockedIps)
+
+	//Test
+	test := app.Group("/test")
+	test.Get("/sessions", testhandlers.GetSessions)
 
 	// rank := app.Group("/rank", authentication.AuthMiddleware)
 	// rank.Get("/get", rankhandlers.Get)
