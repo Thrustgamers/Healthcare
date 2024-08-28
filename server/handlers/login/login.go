@@ -52,7 +52,7 @@ func Login(c *fiber.Ctx) error {
 
 	// Generating a unique session identifier for further authentication
 	sessionID := uuid.New()
-	UserID := len(storage.SessionManager)
+	UserID := dbData.ID
 
 	// Defining all userData
 	userData := storage.UserSession{

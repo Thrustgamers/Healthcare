@@ -13,7 +13,7 @@ import (
 )
 
 type authentication struct {
-	UserID int       `json:"UserID,string"`
+	UserID uint      `json:"UserID,string"`
 	Token  uuid.UUID `json:"Token,string"`
 }
 
