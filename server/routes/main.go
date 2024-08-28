@@ -1,11 +1,11 @@
 package routes
 
 import (
-	adminhandlers "api/handlers/admin"
-	loginhandlers "api/handlers/login"
-	testhandlers "api/handlers/test"
-	userhandlers "api/handlers/users"
-	"api/middleware"
+	adminRoutes "api/routes/admin"
+	loginRoutes "api/routes/login"
+	rankRoutes "api/routes/ranks"
+	testRoutes "api/routes/test"
+	userRoutes "api/routes/users"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -19,23 +19,18 @@ func SetupRoutes(app *fiber.App) {
 		log.Error().Err(err)
 	}
 
-	//Login
-	app.Get("/login", loginhandlers.Login)
-	app.Get("/logout", loginhandlers.Logout)
-	app.Post("/statuscheck", loginhandlers.StatusCheck)
+	//Setup admin routes
+	adminRoutes.SetupAdminRoutes(app)
 
-	//Users
-	user := app.Group("/user", middleware.SessionAuth)
-	user.Get("/get", userhandlers.Get)
+	//Setup login/logout routes
+	loginRoutes.SetupLoginRoutes(app)
 
-	//Admin
-	admin := app.Group("/admin", middleware.AdminAuth)
-	admin.Get("/", adminhandlers.GetBlockedIps)
+	//Setup rank routes
+	rankRoutes.SetupRankRoutes(app)
 
-	//Test
-	test := app.Group("/test")
-	test.Get("/sessions", testhandlers.GetSessions)
+	//Setup test routes
+	testRoutes.SetupTestRoutes(app)
 
-	// rank := app.Group("/rank", authentication.AuthMiddleware)
-	// rank.Get("/get", rankhandlers.Get)
+	//Setup user routes
+	userRoutes.SetupUserRoutes(app)
 }
